@@ -1,0 +1,12 @@
+{
+  "base": "git:merge-base(origin/master), arc:upstream, git:HEAD^",
+  "project_id": "jones",
+  "conduit_uri" : "http://phabricator.local.disqus.net/",
+  "arcanist_configuration": "DisqusConfiguration",
+  "copyright_holder": "Disqus, Inc.",
+  "immutable_history": false,
+  "differential.field-selector": "DisqusDifferentialFieldSelector",
+  "phutil_libraries": {
+      "disqus": "/usr/local/include/php/libdisqus/src"
+  }
+}

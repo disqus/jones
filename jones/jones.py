@@ -18,6 +18,9 @@ import collections
 import json
 from functools import partial
 import zkutil
+import logging
+
+logger = logging.getLogger()
 
 
 class ZNodeMap(object):
@@ -53,6 +56,7 @@ class ZNodeMap(object):
         zmap, version = self._get()
         del zmap[name]
         self._set(zmap, version)
+        logger.info('removed %(name)s from zmap', extra={'name': name, 'zmap': zmap, 'notify': True})
 
     def _get(self):
         """get and parse data stored in self.path."""
@@ -72,6 +76,7 @@ class ZNodeMap(object):
             return '\n'.join(self.SEPARATOR.join((k, d[k])) for k in d)
 
         self.zk.set(self.path, _serialize(data).encode('utf8'), version)
+        logger.info('set new data at %(path)s with %(version)s', extra={'path': self.path, 'data': data, 'version': str(version), 'notify': True})
 
 
 class Jones(object):
@@ -157,6 +162,8 @@ class Jones(object):
             self._get_view_path(env)
         )
 
+        logger.info('deleted config %(env)s %(version)s', extra={'env': env, 'env_path': self._get_env_path(env), 'version': str(version), 'notify': True})
+
     def get_config(self, hostname):
         """
         Returns a configuration for hostname.
@@ -225,6 +232,7 @@ class Jones(object):
 
     def delete_all(self):
         self.zk.delete(self.root, recursive=True)
+        logger.info('removed all under path %(path)s', extra={'path': self.root, 'notify': True})
 
     def get_child_envs(self, env=None):
         prefix = self._get_env_path(env)
@@ -278,7 +286,23 @@ class Jones(object):
         return metadata.version, json.loads(data)
 
     def _set(self, path, data, *args, **kwargs):
-        return self.zk.set(path, json.dumps(data), *args, **kwargs)
+        # This is not an atomic operation, there is a race condition when fetching the previous_value and setting the new value so the email diff may be wrong
+        try:
+            previous_value, znode_stat = self.zk.get(path, *args, **kwargs)
+        except:
+            previous_value = {}
+        json_data = json.dumps(data)
+        ret = self.zk.set(path, json_data, *args, **kwargs)
+        logger.info('set new data at path %(path)s', extra={'path': path, 'new_data': data, 'myargs': args, 'mykwargs': kwargs, 'diff':{path: (previous_value, json_data)}, 'notify': True})
+        return ret
 
     def _create(self, path, data, *args, **kwargs):
-        return self.zk.create(path, json.dumps(data), *args, **kwargs)
+        # This is not an atomic operation, there is a race condition when fetching the previous_value and setting the new value so the email diff may be wrong
+        try:
+            previous_value = self.zk.get(path, *args, **kwargs)[0]
+        except:
+            previous_value = {}
+        json_data = json.dumps(data)
+        ret = self.zk.create(path, json_data, *args, **kwargs)
+        logger.info('created new data at path %(path)s', extra={'path': path, 'new_data': data, 'myargs': args, 'mykwargs': kwargs, 'diff':{path: (previous_value, json_data)}, 'notify': True})
+        return ret

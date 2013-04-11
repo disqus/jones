@@ -1,6 +1,5 @@
 jones
 =====
-
 [![travis][2]][1]
 
 Jones is a configuration frontend for Zookeeper.
@@ -44,21 +43,18 @@ It's also incredibly simple (only 30 lines), so it should be easy to customize. 
     client.get('missingkey', 'default')
     'default'
 
-<dl>
-  <dt>zk</dt>
-  <dd>An instance of kazoo.client.KazooClient.</dd>
-  <dt>service</dt>
-  <dd>The name of the service you want config for.</dd>
-</dl>
+
+- zk
+    - An instance of `kazoo.client.KazooClient`.
+- service
+    - The name of the service you want config for.
 
 The JonesClient object also takes an optional callback and association.
+- cb
+    - A method to be called with a config dict every time it changes.
+- association
+    - A key in the _associations_ map. By default JonesClient uses `socket.getfqdn()`.
 
-<dl>
-  <dt>cb</dt>
-  <dd>A method to be called with a config dict every time it changes.</dd>
-  <dt>association</dt>
-  <dd>A key in the _associations_ map. By default JonesClient uses socket.getfqdn().</dd>
-</dl>
 
 Design
 ------
@@ -80,47 +76,47 @@ Example data tree dump. This shows data for an example service:
     /conf
       foo = u'bar'
       /parent
-        a = 1 
+        a = 1
         b = [1, 2, 3]
         c = {u'x': 0}
         /child1
-          a = 2 
+          a = 2
     /nodemaps
       127.0.0.1 -> /services/testservice/views/parent
       127.0.0.2 -> /services/testservice/views/parent/child1
     /views
       foo = u'bar'
       /parent
-        a = 1 
+        a = 1
         b = [1, 2, 3]
         c = {u'x': 0}
         foo = u'bar'
         /child1
-          a = 2           
+          a = 2
           b = [1, 2, 3]
-          c = {u'x': 0}          
+          c = {u'x': 0}
           foo = u'bar'
 ```
 
 Glossary
 --------
 
-<dl>
-  <dt>Config Tree</dt>
-  <dd>The hierarchy of nodes.</dd>
-  <dt>Node</dt>
-  <dd>A node in the config tree. Nodes hold configuration for an environment. Implemented as a znode.</dd>
-  <dt>Environment</dt>
+
+- Config Tree
+    - The hierarchy of nodes.
+- Node
+    - A node in the config tree. Nodes hold configuration for an environment. Implemented as a znode.
+- Environment
   <dd>Also seen as <em>env</em> in the code, an environment is the path to a specific node in the config tree
   (i.e. parent/child).</dd>
-  <dt>Association</dt>
-  <dd>The identifier a client will use to address a node. Any string will work, but the fqdn or ip address are common.</dd>
-  <dt>View</dt>
+- Association
+    - The identifier a client will use to address a node. Any string will work, but the fqdn or ip address are common.
+- View
   <dd>A view is a node which has has the following algorithm applied
     <pre>for node in root -> env
   update view with node.config</pre>
   </dd>
-</dl>
+
 
 Screenshot
 ----------

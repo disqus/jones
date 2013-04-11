@@ -14,6 +14,9 @@ See the License for the specific language governing permissions and
 limitations under the License.
 """
 
+import logging_config
+logging_config.configure()
+
 import os
 
 _basedir = os.path.abspath(os.path.dirname(__file__))
@@ -23,3 +26,4 @@ TESTING = True
 SECRET_KEY = 'developement key'
 ZK_CONNECTION_STRING = ''
 ZK_DIGEST_PASSWORD = 'changeme'
+

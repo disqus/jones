@@ -20,19 +20,25 @@ VERSION = '0.6.0'
 NAME = 'jones'
 
 install_requires = [
-    'kazoo>=0.5,<0.7'
+    'kazoo>=0.5,<0.7',
+    'raven==3.3.2',
+    'markdown',
+    'pygments',
+    'pynliner',
+    'cssutils',
+    'BeautifulSoup',
 ]
 
 web_requires = install_requires + [
     'flask',
-    'raven'
+    'raven',
 ]
 
 tests_require = web_requires + [
     'nose',
     'unittest2',
     'mock',
-    'gevent'
+    'gevent',
 ]
 
 if __name__ == '__main__':
