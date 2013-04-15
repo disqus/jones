@@ -27,6 +27,7 @@ install_requires = [
     'pynliner',
     'cssutils',
     'BeautifulSoup',
+    'logutils',
 ]
 
 web_requires = install_requires + [
