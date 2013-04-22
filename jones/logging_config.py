@@ -3,7 +3,7 @@ import json
 import logging
 import string
 import textwrap
-from logging.config import dictConfig
+from logutils.dictconfig import dictConfig
 from sys import maxint as MAXINT
 
 #TODO: refactor the diffing mail handler into a lib
