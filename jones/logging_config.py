@@ -5,6 +5,7 @@ import string
 import textwrap
 from logutils.dictconfig import dictConfig
 from sys import maxint as MAXINT
+import types
 
 #TODO: refactor the diffing mail handler into a lib
 css = """
@@ -328,8 +329,13 @@ class MailHandler(logging.handlers.SMTPHandler):
             pass
 
         try:
-            port = self.mailport or smtplib.SMTP_PORT
-            smtp = smtplib.SMTP(self.mailhost, port)
+            if type(self.mailhost) == types.TupleType:
+                mailhost, mailport = self.mailhost
+            else:
+                mailhost = self.mailhost
+                mailport = getattr(self, 'mailport', smtplib.SMTP_PORT)
+
+            smtp = smtplib.SMTP(mailhost, mailport)
             if self.username:
                 smtp.login(self.username, self.password)
 
@@ -345,6 +351,7 @@ config = {
     "disable_existing_loggers": True,
     "formatters": {
         "mail": { "()": MailFormatter, },
+        'simple': { 'format': '%(levelname)s %(name)s %(message)s', 'datefmt': '%Y-%m-%d %H:%M:%S',},
     },
     "filters": {
         "mail": { "()": MailFilter, },
@@ -360,24 +367,29 @@ config = {
             "level": "INFO",
             "formatter": "mail",
             "filters": ["mail"],
-            "mailhost": ("localhost", "587"),
-            "fromaddr": "jones@disqus.com",
+            "mailhost": ["localhost", "25"],
+            "fromaddr": "team+jones@disqus.com",
             "toaddrs": ["team+jones@disqus.com",],
             "subject": "[jones-all] %(msg)s",
-            "credentials": ['username', 'password'],
         },
         "console-mail": {
-            "level": "INFO",
+            "level": "DEBUG",
             "class": "logging.StreamHandler",
             "formatter": "mail",
             "filters": ["mail"],
+        },
+        "console": {
+            "level": "DEBUG",
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
         },
     },
     "loggers": {
         "": {
             "handlers": [
                 "mail", # sends an email for all logs with extra={"mail":True}
-                # "console-mail", # sends an email for all logs with extra={"mail":True}
+                "console-mail", # sends an email for all logs with extra={"mail":True}
+                "console",
                 "sentry", # alert on all error or exceptions
             ],
             "level": "INFO",
