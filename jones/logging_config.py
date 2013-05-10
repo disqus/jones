@@ -368,8 +368,8 @@ config = {
             "formatter": "mail",
             "filters": ["mail"],
             "mailhost": ["localhost", "25"],
-            "fromaddr": "team+jones@disqus.com",
-            "toaddrs": ["team+jones@disqus.com",],
+            "fromaddr": "noreply@disqus.com",
+            "toaddrs": ["jones-notifications@disqus.com",],
             "subject": "[jones-all] %(msg)s",
         },
         "console-mail": {
