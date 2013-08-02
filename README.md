@@ -18,7 +18,7 @@ At their root, most configuration systems are a hierarchy of dictionaries. The r
 with config specific to say, developers or a staging area, inheriting and overriding values. Jones takes this idea and
 maps it to Zookeeper.
 
-Zookeeper is the ideal place for configuration. Besides it's availability guarantees, it's also able to update observers
+Zookeeper is the ideal place for configuration. Besides its availability guarantees, it's also able to update observers
 when data changes. Now we can change config at runtime, making possible a whole category of use-cases like switches, a/b
 tests, and knob and lever you can imagine.
 
